@@ -1,6 +1,6 @@
 {
-    "short_name": "React App",
-    "name": "Create React App Sample",
+    "short_name": "BlockSchedule",
+    "name": "  Schedule Block Stack Builder",
     "icons": [
         {
             "src": "icons/windows10/SmallTile.scale-100.png",

@@ -59,8 +59,8 @@ function AuthManager(props) {
 
     return (
         <div className='navbar'>
-            <div style={{ flex: 1, alignItems: "center", display: "flex", padding: "0 0.5rem", overflow: "scroll" }}>
-                <h1 style={{ margin: 0, whiteSpace: "nowrap" }}>{user.displayName}</h1>
+            <div style={{ flex: 1, alignItems: "center", paddingLeft: "1rem", display: "flex", height: "100%" }}>
+                <h1 style={{ margin: 0, marginLeft: "0.5rem", whiteSpace: "nowrap", fontSize: "1.25rem" }}>{user.displayName}</h1>
             </div>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", padding: "0 0rem", paddingLeft: "1rem" }}>
                 <button className='button' onClick={signOut}>

@@ -17,6 +17,12 @@
     }
 }
 
+::-webkit-scrollbar {
+    width: 0; /* Remove scrollbar space */
+    height: 0;
+    background: transparent; /* Optional: just make scrollbar invisible */
+}
+
 :root {
     --margin: 0.5rem;
 
@@ -63,6 +69,7 @@ body {
     background-color: var(--bg2);
     height: calc(100% - 8rem - 0rem);
     overflow: scroll;
+    padding-bottom: 0;
 }
 
 .blockSpace {
@@ -212,7 +219,7 @@ body {
     display: flex;
     align-items: center;
     margin-right: 0.5rem;
-    pointer-events: none;
+    /* pointer-events: none; */
 }
 
 .blockInput {
@@ -231,6 +238,8 @@ body {
     display: flex;
     flex-direction: row;
     height: auto;
+    border-top: 2px solid var(--bg2);
+    box-sizing: border-box;
 }
 
 .createButton {
@@ -256,6 +265,9 @@ body {
     flex: 1;
     align-items: center;
     pointer-events: none;
+    overflow: hidden;
+    /* box-sizing: border-box; */
+    padding-right: 1rem;
 }
 
 .blockText {
@@ -266,7 +278,11 @@ body {
     font-size: 1.5rem;
     text-overflow: ellipsis;
     max-width: 50vw;
-    overflow: hidden;
+    white-space: nowrap;
+    overflow: visible;
+
+    /* overflow-x: hidden;
+    overflow-y: visible; */
 }
 
 .button {

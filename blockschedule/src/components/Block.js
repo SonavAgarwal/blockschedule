@@ -30,6 +30,10 @@ function Block(props) {
         setMenuOpen(false);
     }
 
+    function toggleMenu() {
+        setMenuOpen(!menuOpen);
+    }
+
     function updateTime() {
         updateBlockTime(props.blockRef, blockTime);
     }
@@ -55,7 +59,7 @@ function Block(props) {
                         }
                     }}
                     className={`block ${props.playing ? "blockPlaying" : ""}`}>
-                    <span className='roundSpan'>
+                    <span onClick={toggleMenu} className='roundSpan'>
                         {blockTime} <FaClock className='centeredIcon' alignmentBaseline='middle'></FaClock>
                     </span>
                     <div className='blockTextWrapper'>
