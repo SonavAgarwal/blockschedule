@@ -50,11 +50,7 @@ function AuthManager(props) {
     });
 
     if (loading) {
-        return (
-            <div>
-                <p>Initialising User...</p>
-            </div>
-        );
+        return null;
     }
 
     if (!user) {

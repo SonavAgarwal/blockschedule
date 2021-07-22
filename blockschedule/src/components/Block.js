@@ -35,8 +35,18 @@ function Block(props) {
     }
 
     return (
-        <div className={`blockSpace ${deleted ? "blockDeleted" : ""}`}>
-            <div className='blockWrapper' style={{ transform: `rotate(${props.dragging ? "3deg" : "0deg"})` }}>
+        <div
+            className={`blockSpace ${deleted ? "blockDeleted" : ""} ${props.block.t === 0 ? "blockFinished" : ""} ${props.top ? "blockTop" : ""} ${
+                props.playing ? "blockPlayingTag" : ""
+            }`}>
+            <div
+                className='blockWrapper'
+                style={{ transform: `rotate(${props.dragging ? "3deg" : "0deg"})` }}
+                onClick={function (e) {
+                    if (e.currentTarget === e.target) {
+                        closeMenu();
+                    }
+                }}>
                 <div
                     {...handlers}
                     onClick={function (e) {
@@ -44,7 +54,7 @@ function Block(props) {
                             closeMenu();
                         }
                     }}
-                    className='block'>
+                    className={`block ${props.playing ? "blockPlaying" : ""}`}>
                     <span className='roundSpan'>
                         {blockTime} <FaClock className='centeredIcon' alignmentBaseline='middle'></FaClock>
                     </span>

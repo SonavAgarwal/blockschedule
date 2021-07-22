@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { createBlock, db, getUID, signOut, updateBlockIndex, useUID } from "../cloud/database";
+import { createBlock, db, deleteBlock, getUID, signOut, updateBlockIndex, updateBlockTime, useUID } from "../cloud/database";
 
 import { useList, useListVals } from "react-firebase-hooks/database";
 import Block from "../components/Block";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-import { FaCheck, FaPlay } from "react-icons/fa";
+import { FaCheck, FaPause, FaPlay } from "react-icons/fa";
 
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -19,12 +19,14 @@ const reorder = (list, startIndex, endIndex) => {
 function Blocks(props) {
     // const uid = useUID();
     const [values, loading, error] = useList(db.ref(`/users/${getUID()}/b`));
-    console.log(values);
     const [blocks, setBlocks] = useState([]);
 
     const endDiv = useRef();
 
     const [blockName, setBlockName] = useState("");
+
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [playingIndex, setPlayingIndex] = useState(0);
 
     useEffect(
         function () {
@@ -36,6 +38,49 @@ function Blocks(props) {
         },
         [values]
     );
+
+    useEffect(
+        function () {
+            let intervalID = setInterval(() => {
+                console.log("interval run");
+                handleTick();
+            }, 60000);
+            return () => {
+                clearInterval(intervalID);
+            };
+        },
+        [isPlaying, blocks, playingIndex]
+    );
+
+    function handleTick() {
+        let playingIndexTemp = playingIndex;
+        if (isPlaying) {
+            if (blocks.length === 0) {
+                setIsPlaying(false);
+                return;
+            }
+            // let tryIndex = 0;
+            while (true) {
+                if (playingIndexTemp > blocks.length - 1) {
+                    setIsPlaying(false);
+                    setPlayingIndex(0);
+                    return;
+                }
+                let block = blocks[playingIndexTemp];
+                let newTime = block.val().t - 1;
+
+                if (newTime < 0) {
+                    playingIndexTemp += 1;
+                    continue;
+                } else {
+                    updateBlockTime(block.ref, block.val().t - 1);
+                    break;
+                }
+            }
+            if (playingIndex !== playingIndexTemp) findPlaying();
+            setPlayingIndex(playingIndexTemp);
+        }
+    }
 
     function onDragEnd(result) {
         // dropped outside the list
@@ -52,6 +97,31 @@ function Blocks(props) {
         });
 
         setBlocks(items);
+        if (result.source.index !== result.destination.index) {
+            if (result.destination.index <= playingIndex) {
+                setFirstPlayIndex();
+            }
+        }
+    }
+
+    function setFirstPlayIndex() {
+        blocks.some(function (block, index) {
+            if (block.val().t !== 0) {
+                setPlayingIndex(index);
+                return true;
+            }
+        });
+    }
+
+    function findPlaying() {
+        setTimeout(() => {
+            let playEl = document.getElementsByClassName("blockPlayingTag")[0];
+            console.log("ayee");
+            console.log(playEl);
+            if (playEl) {
+                playEl.scrollIntoView({ behavior: "smooth" });
+            }
+        }, 500);
     }
 
     function handleFormSubmit(event) {
@@ -68,15 +138,21 @@ function Blocks(props) {
     }
 
     // console.log(values);
-    if (loading) return <div>loadign</div>;
-    if (!values) return <div>loadignggg</div>;
-    if (error) return <div>errro</div>;
+    if (loading) return <div></div>;
+    if (!values) return <div></div>;
+    if (error) return <div></div>;
 
     return (
         <>
             <div className='playContainer'>
-                <button className='playButton'>
-                    <FaPlay></FaPlay>
+                <button
+                    className='playButton'
+                    onClick={function () {
+                        setFirstPlayIndex();
+                        setIsPlaying(!isPlaying);
+                        findPlaying();
+                    }}>
+                    {isPlaying ? <FaPause></FaPause> : <FaPlay></FaPlay>}
                 </button>
             </div>
             <div className='blocks'>
@@ -95,7 +171,9 @@ function Blocks(props) {
                                                             <Block
                                                                 dragging={snapshot.isDragging && !snapshot.isDropAnimating}
                                                                 block={b.val()}
-                                                                blockRef={b.ref}></Block>
+                                                                blockRef={b.ref}
+                                                                top={index === 0}
+                                                                playing={index === playingIndex && isPlaying}></Block>
                                                         </div>
                                                     );
                                                 }}
