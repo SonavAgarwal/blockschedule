@@ -7,6 +7,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, signOut } from "./cloud/database";
 import SignIn from "./pages/SignIn";
 import Blocks from "./pages/Blocks";
+import UserLoader from "./components/UserLoader";
 
 function App() {
     return (
@@ -18,7 +19,9 @@ function App() {
                         <SignIn />
                     </Route>
                     <Route path='/home'>
-                        <Blocks />
+                        <UserLoader>
+                            <Blocks />
+                        </UserLoader>
                     </Route>
                     <Route path='/'>
                         <div>
@@ -60,14 +63,16 @@ function AuthManager(props) {
 
     return (
         <div className='navbar'>
-            <div style={{ flex: 1 }}></div>
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "8vh", padding: "0vh 2vh" }}>
+            <div style={{ flex: 1, alignItems: "center", display: "flex", padding: "0 0.5rem", overflow: "scroll" }}>
+                <h1 style={{ margin: 0, whiteSpace: "nowrap" }}>{user.displayName}</h1>
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", padding: "0 0rem", paddingLeft: "1rem" }}>
                 <button className='button' onClick={signOut}>
                     Sign Out
                 </button>
             </div>
-            <div style={{ height: "8vh", aspectRatio: "1/1", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <img src={user.photoURL} style={{ width: "6vh", height: "6vh", borderRadius: "100%" }}></img>
+            <div style={{ height: "100%", aspectRatio: "1/1", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <img src={user.photoURL} style={{ width: "2.5rem", height: "2.5rem", borderRadius: "100%" }}></img>
             </div>
         </div>
     );

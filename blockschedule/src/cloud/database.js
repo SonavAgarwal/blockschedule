@@ -14,15 +14,23 @@ export const auth = firebase.auth();
 export const db = firebase.database();
 
 export async function createBlock(name, index) {
-    db.ref(`/users/${getUID()}`).push({
+    if (name === "") return;
+    db.ref(`/users/${getUID()}/b`).push({
         n: name,
         i: index,
+        t: 30,
     });
 }
 
 export async function updateBlockIndex(blockRef, newIndex) {
     blockRef.update({
         i: newIndex,
+    });
+}
+export async function updateBlockTime(blockRef, newTime) {
+    if (newTime === undefined) return;
+    blockRef.update({
+        t: newTime,
     });
 }
 
@@ -41,13 +49,18 @@ export function useUID() {
 
     useEffect(
         function () {
-            if (user) {
-                setUID(user.uid);
-            } else {
-                setUID(null);
-            }
+            const unsubscribe = auth.onAuthStateChanged(function (user) {
+                if (user) {
+                    setUID(user.uid);
+                } else {
+                    setUID(null);
+                }
+            });
+            return () => {
+                unsubscribe();
+            };
         },
-        [user]
+        [user, loading, error]
     );
 
     return uid;

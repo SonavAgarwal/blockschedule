@@ -1,27 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+
 .App {
     text-align: center;
-}
-
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
 }
 
 .App-link {
@@ -39,14 +19,37 @@
 
 :root {
     --margin: 0.5rem;
+
+    --bg1: white;
+    --bg2: #eeeeee;
+    --bg3: #dfdfdf;
+    --primary1: #419c39;
+    --primary2: #337a2d;
+}
+
+* {
+    font-family: "Roboto Condensed", sans-serif;
 }
 
 body {
     overflow: hidden;
 }
 
+html {
+    height: 100%;
+}
+body {
+    min-height: 100%;
+}
+#root,
+.App {
+    height: 100% !important;
+    position: absolute;
+    width: 100%;
+}
+
 .navbar {
-    height: 8vh;
+    height: 4rem;
     display: flex;
     flex-direction: row;
 }
@@ -56,14 +59,29 @@ body {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    background-color: gray;
-    height: 84vh;
+    background-color: var(--bg2);
+    height: calc(100% - 8rem - 5rem);
     overflow: scroll;
 }
 
 .blockSpace {
     padding-top: calc(var(--margin) / 2);
     padding-bottom: calc(var(--margin) / 2);
+    max-height: 20rem;
+    transition: all 500ms ease-in;
+    /* overflow: hidden; */
+    box-sizing: border-box;
+}
+
+.blockWrapper {
+    /* display: flex;
+    flex-direction: row; */
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
 }
 
 .swipeableBlock {
@@ -71,26 +89,34 @@ body {
 }
 
 .block {
-    /* width: 100%; */
-    flex: 1;
+    width: 100%;
+
     display: flex;
     flex-direction: row;
+    /* flex: 1; */
     height: auto;
 
-    background-color: coral;
+    background-color: var(--bg1);
     padding-top: 1rem;
     padding-bottom: 1rem;
     padding-left: 1rem;
     padding-right: 1rem;
     box-sizing: border-box;
 
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
 
     border-radius: 0.5rem;
+
+    overflow: hidden;
+}
+
+.blockDeleted {
+    max-height: 0 !important;
 }
 
 .deleteBlock {
-    transition: max-width 0.3s ease;
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
     /* height: 100%; */
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -100,31 +126,169 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: red;
+    background-color: var(--bg3);
     overflow: hidden;
     text-overflow: clip;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+}
+
+.deleteBlockClosed {
+    transform: translateX(150%);
+}
+.deleteBlockOpen {
+    transform: translateX(0%);
+}
+
+.timeInput {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    background: transparent; /* Otherwise white in Chrome */
+    margin: 0;
+}
+
+.timeInput::-webkit-slider-runnable-track {
+    width: 10rem;
+    height: 2rem;
+    background-color: var(--bg1);
+    border-radius: 0.5rem;
+}
+.timeInput::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--primary1);
+    border-radius: 0.5rem;
+}
+
+.editButton {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    color: var(--primary2);
+}
+
+.editButton:active {
+    background-color: var(--bg1);
+}
+
+.centeredIcon {
+    vertical-align: baseline;
+    font-size: 1.5rem;
+    transform: scale(0.7);
+    margin-left: 0.5rem;
+}
+
+.roundSpan {
+    border-radius: 0.5rem;
+    background-color: var(--bg2);
+    padding: 0.5rem;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
 }
 
 .blockInput {
-    height: 8vh;
+    height: 4rem;
     padding-left: 2rem;
     padding-right: 2rem;
     width: 100%;
     box-sizing: border-box;
     border: none;
     outline: none;
-    font-size: 3vh;
+    font-size: 1.5rem;
+    flex: 1;
+}
+
+.blockInputForm {
+    display: flex;
+    flex-direction: row;
+    height: auto;
+}
+
+.createButton {
+    display: flex;
+    height: 4rem;
+    aspect-ratio: 1/1;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    border: none;
+    outline: none;
+    background-color: var(--bg1);
+    color: var(--primary1);
+    transition: all 0.1s ease;
+}
+
+.createButton:active {
+    background-color: var(--bg3);
+}
+
+.blockTextWrapper {
+    display: flex;
+    flex: 1;
+    align-items: center;
+}
+
+.blockText {
+    vertical-align: middle;
+    margin: 0;
+    pointer-events: none;
+    height: 1.5rem;
+    font-size: 1.5rem;
+    text-overflow: ellipsis;
+    max-width: 50vw;
+    overflow: hidden;
 }
 
 .button {
-    height: 6vh;
-    font-size: 2vh;
-    background-color: blue;
+    height: 2.5rem;
+    font-size: 1.25rem;
+    background-color: var(--bg2);
     border: none;
     outline: none;
-    border-radius: 0.5em;
-    padding-left: 2vh;
-    padding-right: 2vh;
+    border-radius: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     box-sizing: border-box;
     font-weight: bold;
+    transition: all 0.1s ease;
+}
+
+.button:hover {
+    background-color: var(--bg3);
+}
+
+.playContainer {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    background-color: var(--bg2);
+}
+
+.playButton {
+    height: 3rem;
+    aspect-ratio: 1/1;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    outline: none;
+    color: var(--primary1);
+    background-color: var(--bg1);
+    transition: all 0.1s ease;
+}
+
+.playButton:active {
+    background-color: var(--bg3);
 }

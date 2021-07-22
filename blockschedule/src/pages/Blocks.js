@@ -6,6 +6,8 @@ import Block from "../components/Block";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
+import { FaCheck, FaPlay } from "react-icons/fa";
+
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -15,8 +17,9 @@ const reorder = (list, startIndex, endIndex) => {
 };
 
 function Blocks(props) {
-    const uid = useUID();
-    const [values, loading, error] = useList(db.ref(`/users/${getUID()}`));
+    // const uid = useUID();
+    const [values, loading, error] = useList(db.ref(`/users/${getUID()}/b`));
+    console.log(values);
     const [blocks, setBlocks] = useState([]);
 
     const endDiv = useRef();
@@ -27,7 +30,9 @@ function Blocks(props) {
         function () {
             console.log("the values have changed:");
             console.log(values);
-            setBlocks([...values].sort((a, b) => a.val().i - b.val().i));
+            try {
+                setBlocks([...values].sort((a, b) => a.val().i - b.val().i));
+            } catch {}
         },
         [values]
     );
@@ -51,7 +56,9 @@ function Blocks(props) {
 
     function handleFormSubmit(event) {
         event.preventDefault();
-        createBlock(blockName, values.length);
+        if (values.length < 15) {
+            createBlock(blockName, values.length);
+        }
         setBlockName("");
 
         window.setTimeout(function () {
@@ -62,9 +69,16 @@ function Blocks(props) {
 
     // console.log(values);
     if (loading) return <div>loadign</div>;
+    if (!values) return <div>loadignggg</div>;
+    if (error) return <div>errro</div>;
 
     return (
-        <div>
+        <>
+            <div className='playContainer'>
+                <button className='playButton'>
+                    <FaPlay></FaPlay>
+                </button>
+            </div>
             <div className='blocks'>
                 <div style={{ flex: 1 }}></div>
                 <DragDropContext onDragEnd={onDragEnd}>
@@ -97,6 +111,7 @@ function Blocks(props) {
                 <div ref={endDiv} style={{ height: 1, width: 1 }}></div>
             </div>
             <form
+                className='blockInputForm'
                 onSubmit={(e) => {
                     handleFormSubmit(e);
                 }}>
@@ -107,8 +122,12 @@ function Blocks(props) {
                     onChange={(e) => {
                         setBlockName(e.target.value);
                     }}></input>
+                <button className='createButton' type='submit'>
+                    {" "}
+                    <FaCheck></FaCheck>
+                </button>
             </form>
-        </div>
+        </>
     );
 }
 
