@@ -8,6 +8,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import { FaCheck, FaPause, FaPlay } from "react-icons/fa";
 
+import NoSleep from "nosleep.js";
+
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -17,6 +19,7 @@ const reorder = (list, startIndex, endIndex) => {
 };
 
 function Blocks(props) {
+    const noSleep = useRef(new NoSleep());
     // const uid = useUID();
     const [values, loading, error] = useList(db.ref(`/users/${getUID()}/b`));
     const [blocks, setBlocks] = useState([]);
@@ -57,6 +60,7 @@ function Blocks(props) {
         if (isPlaying) {
             if (blocks.length === 0) {
                 setIsPlaying(false);
+                noSleep.current.disable();
                 return;
             }
             // let tryIndex = 0;
@@ -148,6 +152,7 @@ function Blocks(props) {
                 <button
                     className='playButton'
                     onClick={function () {
+                        noSleep.current.enable();
                         setFirstPlayIndex();
                         setIsPlaying(!isPlaying);
                         findPlaying();
