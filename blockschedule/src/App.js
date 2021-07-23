@@ -41,7 +41,6 @@ function AuthManager(props) {
     useEffect(function () {
         if (!loading) {
             if (user) {
-                console.log(navigation);
                 navigation.push("/home");
             } else {
                 navigation.push("/signin");

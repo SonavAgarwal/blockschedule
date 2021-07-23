@@ -80,11 +80,9 @@ function Block(props) {
                             setBlockTime(e.target.value);
                         }}
                         onMouseUp={function () {
-                            console.log("done changing");
                             updateTime();
                         }}
                         onTouchEnd={function () {
-                            console.log("done changing");
                             updateTime();
                         }}></input>
                     <button

@@ -10,6 +10,8 @@ import { FaCheck, FaPause, FaPlay } from "react-icons/fa";
 
 import NoSleep from "nosleep.js";
 
+import { useLongPress } from "use-long-press";
+
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -20,6 +22,15 @@ const reorder = (list, startIndex, endIndex) => {
 
 function Blocks(props) {
     const noSleep = useRef(new NoSleep());
+
+    const longPress = useLongPress(
+        () => {
+            setPlaySpeed(1000);
+            play();
+        },
+        { threshold: 1000 }
+    );
+
     // const uid = useUID();
     const [values, loading, error] = useList(db.ref(`/users/${getUID()}/b`));
     const [blocks, setBlocks] = useState([]);
@@ -28,6 +39,7 @@ function Blocks(props) {
 
     const [blockName, setBlockName] = useState("");
 
+    const [playSpeed, setPlaySpeed] = useState(60000);
     const [isPlaying, setIsPlaying] = useState(false);
     const [playingIndex, setPlayingIndex] = useState(0);
 
@@ -47,12 +59,12 @@ function Blocks(props) {
             let intervalID = setInterval(() => {
                 console.log("interval run");
                 handleTick();
-            }, 60000);
+            }, playSpeed);
             return () => {
                 clearInterval(intervalID);
             };
         },
-        [isPlaying, blocks, playingIndex]
+        [isPlaying, blocks, playingIndex, playSpeed]
     );
 
     function handleTick() {
@@ -120,12 +132,17 @@ function Blocks(props) {
     function findPlaying() {
         setTimeout(() => {
             let playEl = document.getElementsByClassName("blockPlayingTag")[0];
-            console.log("ayee");
-            console.log(playEl);
             if (playEl) {
                 playEl.scrollIntoView({ behavior: "smooth" });
             }
         }, 500);
+    }
+
+    function play() {
+        noSleep.current.enable();
+        setFirstPlayIndex();
+        setIsPlaying(!isPlaying);
+        findPlaying();
     }
 
     function handleFormSubmit(event) {
@@ -141,7 +158,6 @@ function Blocks(props) {
         // endDiv.scrollIntoView({ behavior: "smooth" });
     }
 
-    // console.log(values);
     if (loading) return <div></div>;
     if (!values) return <div></div>;
     if (error) return <div></div>;
@@ -150,12 +166,11 @@ function Blocks(props) {
         <>
             <div className='playContainer'>
                 <button
+                    {...longPress}
                     className='playButton'
                     onClick={function () {
-                        noSleep.current.enable();
-                        setFirstPlayIndex();
-                        setIsPlaying(!isPlaying);
-                        findPlaying();
+                        setPlaySpeed(60000);
+                        play();
                     }}>
                     {isPlaying ? <FaPause></FaPause> : <FaPlay></FaPlay>}
                 </button>
