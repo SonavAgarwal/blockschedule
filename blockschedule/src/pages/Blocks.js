@@ -34,6 +34,7 @@ function Blocks(props) {
     // const uid = useUID();
     const [values, loading, error] = useList(db.ref(`/users/${getUID()}/b`));
     const [blocks, setBlocks] = useState([]);
+    const [totalLength, setTotalLength] = useState(0);
 
     const endDiv = useRef();
 
@@ -49,6 +50,16 @@ function Blocks(props) {
             console.log(values);
             try {
                 setBlocks([...values].sort((a, b) => a.val().i - b.val().i));
+            } catch {}
+            try {
+                let hold = 0;
+                values.forEach((v) => {
+                    hold = hold + parseInt(v.val().t);
+                });
+
+                let hour = Math.floor(hold / 60);
+                let minute = hold % 60;
+                setTotalLength(hour + ":" + (minute < 10 ? "0" : "") + minute);
             } catch {}
         },
         [values]
@@ -173,6 +184,7 @@ function Blocks(props) {
                         play();
                     }}>
                     {isPlaying ? <FaPause></FaPause> : <FaPlay></FaPlay>}
+                    <h1 className='stackLength'>{totalLength}</h1>
                 </button>
             </div>
             <div className='blocks'>
