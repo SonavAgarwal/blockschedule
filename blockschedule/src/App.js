@@ -24,9 +24,7 @@ function App() {
                         </UserLoader>
                     </Route>
                     <Route path='/'>
-                        <div>
-                            <h1>at hoem</h1>
-                        </div>
+                        <div>{/* <h1>at hoem</h1> */}</div>
                     </Route>
                 </Switch>
             </Router>

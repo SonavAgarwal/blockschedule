@@ -286,6 +286,8 @@ body {
     border: none;
     outline: none;
 
+    background-color: transparent;
+
     width: 100%;
 
     /* overflow-x: hidden;

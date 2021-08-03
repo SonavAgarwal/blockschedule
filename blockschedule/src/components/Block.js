@@ -42,7 +42,6 @@ function Block(props) {
 
     return (
         <div
-            onMouseDown={(e) => e.currentTarget.focus()}
             className={`blockSpace ${deleted ? "blockDeleted" : ""} ${props.block.t === 0 ? "blockFinished" : ""} ${props.top ? "blockTop" : ""} ${
                 props.playing ? "blockPlayingTag" : ""
             }`}>
