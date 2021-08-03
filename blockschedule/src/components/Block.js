@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 import { useSwipeable } from "react-swipeable";
-import { deleteBlock, updateBlockTime } from "../cloud/database";
+import { deleteBlock, updateBlockName, updateBlockTime } from "../cloud/database";
+
+import { debounce } from "debounce";
 
 import { FaPen, FaCheck, FaClock } from "react-icons/fa";
 
@@ -40,6 +42,7 @@ function Block(props) {
 
     return (
         <div
+            onMouseDown={(e) => e.currentTarget.focus()}
             className={`blockSpace ${deleted ? "blockDeleted" : ""} ${props.block.t === 0 ? "blockFinished" : ""} ${props.top ? "blockTop" : ""} ${
                 props.playing ? "blockPlayingTag" : ""
             }`}>
@@ -63,7 +66,19 @@ function Block(props) {
                         {blockTime} <FaClock className='centeredIcon' alignmentBaseline='middle'></FaClock>
                     </span>
                     <div className='blockTextWrapper'>
-                        <h2 className='blockText'>{props.block.n}</h2>
+                        <input
+                            onChange={debounce(function (event) {
+                                console.log("execution");
+                                event.target.classList.add("pulse");
+                                updateBlockName(props.blockRef, event.target.value);
+                                setTimeout(() => {
+                                    event.target.classList.remove("pulse");
+                                }, 300);
+                            }, 800)}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            className='blockText'
+                            defaultValue={props.block.n}></input>
+                        {/* <h2 className='blockText'>{props.block.n}</h2> */}
                     </div>
                     <button onClick={openMenu} className='editButton'>
                         <FaPen></FaPen>

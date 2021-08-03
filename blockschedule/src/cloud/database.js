@@ -33,6 +33,10 @@ export async function updateBlockTime(blockRef, newTime) {
         t: newTime,
     });
 }
+export async function updateBlockName(blockRef, newName) {
+    if (newName === undefined) return;
+    blockRef.update({ n: newName });
+}
 
 export async function deleteBlock(blockRef) {
     blockRef.remove();
