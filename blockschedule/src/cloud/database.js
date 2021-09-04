@@ -35,7 +35,7 @@ export async function updateBlockTime(blockRef, newTime) {
 }
 export async function updateBlockName(blockRef, newName) {
     if (newName === undefined) return;
-    blockRef.update({ n: newName });
+    blockRef.update({ n: newName.trim() });
 }
 
 export async function deleteBlock(blockRef) {

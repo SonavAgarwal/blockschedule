@@ -158,7 +158,7 @@ function Blocks(props) {
 
     function handleFormSubmit(event) {
         event.preventDefault();
-        if (values.length < 15) {
+        if (values.length < 30) {
             createBlock(blockName, values.length);
         }
         setBlockName("");
