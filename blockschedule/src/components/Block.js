@@ -1,16 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { useSwipeable } from "react-swipeable";
-import {
-    deleteBlock,
-    updateBlockName,
-    updateBlockTime,
-} from "../cloud/database";
+import { deleteBlock, updateBlockName, updateBlockTime } from "../cloud/database";
 
 import { debounce } from "debounce";
 
 import { FaPen, FaCheck, FaClock } from "react-icons/fa";
-import tagKeywords from "./tagKeywords";
+import tagKeywords, { linkKeywords } from "./tagKeywords";
 import DivideBar from "./DivideBar";
 
 const encoder = new TextEncoder();
@@ -62,14 +58,9 @@ function Block(props) {
 
                 for (const tag of tagText) {
                     const lowerTag = tag.toString().toLowerCase();
-                    let digest = await window.crypto.subtle.digest(
-                        "SHA-1",
-                        encoder.encode(lowerTag)
-                    ); // hash the message
+                    let digest = await window.crypto.subtle.digest("SHA-1", encoder.encode(lowerTag)); // hash the message
                     let hashArray = Array.from(new Uint8Array(digest)); // convert buffer to byte array
-                    let hashHex = hashArray
-                        .map((b) => b.toString(16).padStart(2, "0"))
-                        .join(""); // convert bytes to hex string
+                    let hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
                     let color = "#" + hashHex.substring(0, 6);
 
                     for (const kw of tagKeywords) {
@@ -77,7 +68,22 @@ function Block(props) {
                             color = kw.color;
                         }
                     }
-                    tagObjects.push({ text: tag, color: color });
+
+                    let isLink = false;
+                    for (const kw of linkKeywords) {
+                        if (tag.includes(kw)) {
+                            isLink = true;
+                        }
+                    }
+
+                    let tagText = tag;
+                    if (isLink && !tagText.includes("http")) tagText = "//" + tag;
+
+                    if (isLink) {
+                        tagObjects.push({ text: tagText, color: color, link: true });
+                    } else {
+                        tagObjects.push({ text: tagText, color: color, link: false });
+                    }
                 }
 
                 setBlockTags(tagObjects);
@@ -107,9 +113,7 @@ function Block(props) {
 
     function handleTagClick(event, tagObj) {
         if (event.detail === 3) {
-            let filteredBlockTags = [...blockTags].filter(
-                (bT) => bT !== tagObj
-            );
+            let filteredBlockTags = [...blockTags].filter((bT) => bT !== tagObj);
             setBlockTags(filteredBlockTags);
             setBlockTags(filteredBlockTags);
             setTimeout(() => {
@@ -135,14 +139,11 @@ function Block(props) {
     if (props.block.n === "~DIVIDEBAR~") return <DivideBar></DivideBar>;
     return (
         <div
-            className={`blockSpace ${deleted ? "blockDeleted" : ""} ${
-                props.block.t === 0 ? "blockFinished" : ""
-            } ${props.top ? "blockTop" : ""} ${
+            className={`blockSpace ${deleted ? "blockDeleted" : ""} ${props.block.t === 0 ? "blockFinished" : ""} ${props.top ? "blockTop" : ""} ${
                 props.playing ? "blockPlayingTag" : ""
-            }`}
-        >
+            }`}>
             <div
-                className="blockWrapper"
+                className='blockWrapper'
                 style={{
                     transform: `rotate(${props.dragging ? "3deg" : "0deg"})`,
                 }}
@@ -150,8 +151,7 @@ function Block(props) {
                     if (e.currentTarget === e.target) {
                         closeMenu();
                     }
-                }}
-            >
+                }}>
                 <div
                     {...handlers}
                     onClick={function (e) {
@@ -159,65 +159,66 @@ function Block(props) {
                             closeMenu();
                         }
                     }}
-                    className={`block ${props.playing ? "blockPlaying" : ""}`}
-                >
-                    <span onClick={toggleMenu} className="roundSpan">
-                        {blockTime}{" "}
-                        <FaClock
-                            className="centeredIcon"
-                            alignmentBaseline="middle"
-                        ></FaClock>
+                    className={`block ${props.playing ? "blockPlaying" : ""}`}>
+                    <span onClick={toggleMenu} className='roundSpan'>
+                        {blockTime} <FaClock className='centeredIcon' alignmentBaseline='middle'></FaClock>
                     </span>
-                    <div className="blockTags">
+                    <div className='blockTags'>
                         {blockTags.map((tagObject) => {
+                            if (tagObject.link) {
+                                return (
+                                    <span
+                                        onClick={(event) => {
+                                            handleTagClick(event, tagObject);
+                                        }}
+                                        className='roundSpan'
+                                        style={{
+                                            backgroundColor: tagObject.color,
+                                        }}>
+                                        <a className='tagLink' target='_blank' href={tagObject.text}>
+                                            Link
+                                        </a>
+                                    </span>
+                                );
+                            }
                             return (
                                 <span
                                     onClick={(event) => {
                                         handleTagClick(event, tagObject);
                                     }}
-                                    className="roundSpan"
+                                    className='roundSpan'
                                     style={{
                                         backgroundColor: tagObject.color,
-                                    }}
-                                >
+                                    }}>
                                     {tagObject.text}
                                 </span>
                             );
                         })}
                     </div>
-                    <div className="blockTextWrapper">
+                    <div className='blockTextWrapper'>
                         <input
                             ref={inputRef}
                             onChange={debounce(function (event) {
                                 event.target.classList.add("pulse");
-                                updateAllBlockName(
-                                    event.target.value,
-                                    blockTags
-                                );
+                                updateAllBlockName(event.target.value, blockTags);
 
                                 setTimeout(() => {
                                     event.target.classList.remove("pulse");
                                 }, 300);
                             }, 800)}
                             onMouseDown={(e) => e.stopPropagation()}
-                            className="blockText"
-                            defaultValue={blockName}
-                        ></input>
+                            className='blockText'
+                            defaultValue={blockName}></input>
                     </div>
-                    <button onClick={openMenu} className="editButton">
+                    <button onClick={openMenu} className='editButton'>
                         <FaPen></FaPen>
                     </button>
                 </div>
-                <div
-                    tabIndex={-1}
-                    className={`deleteBlock ${
-                        menuOpen ? "deleteBlockOpen" : "deleteBlockClosed"
-                    }`}
-                >
+                <div tabIndex={-1} className={`deleteBlock ${menuOpen ? "deleteBlockOpen" : "deleteBlockClosed"}`}>
                     <input
                         tabIndex={-1}
-                        className="timeInput"
-                        type="range"
+                        className='timeInput'
+                        type='range'
                         min={5}
                         max={60}
                         value={blockTime}
@@ -229,8 +230,7 @@ function Block(props) {
                         }}
                         onTouchEnd={function () {
                             updateTime();
-                        }}
-                    ></input>
+                        }}></input>
                     <button
                         tabIndex={-1}
                         onClick={function () {
@@ -240,8 +240,7 @@ function Block(props) {
                             }, 500);
                         }}
                         style={{ marginLeft: "0.5em" }}
-                        className="editButton"
-                    >
+                        className='editButton'>
                         <FaCheck></FaCheck>
                     </button>
                 </div>
