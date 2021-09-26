@@ -1,12 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { useSwipeable } from "react-swipeable";
-import { deleteBlock, updateBlockName, updateBlockTime } from "../cloud/database";
+import {
+    deleteBlock,
+    updateBlockName,
+    updateBlockTime,
+} from "../cloud/database";
 
 import { debounce } from "debounce";
 
 import { FaPen, FaCheck, FaClock } from "react-icons/fa";
 import tagKeywords from "./tagKeywords";
+import DivideBar from "./DivideBar";
 
 const encoder = new TextEncoder();
 
@@ -40,6 +45,7 @@ function Block(props) {
 
     useEffect(
         function () {
+            if (props.block.n === "~DIVIDEBAR~") return;
             let splitText = props.block.n.split(" ");
             let tagText = [];
             let nameText = [];
@@ -56,9 +62,14 @@ function Block(props) {
 
                 for (const tag of tagText) {
                     const lowerTag = tag.toString().toLowerCase();
-                    let digest = await window.crypto.subtle.digest("SHA-1", encoder.encode(lowerTag)); // hash the message
+                    let digest = await window.crypto.subtle.digest(
+                        "SHA-1",
+                        encoder.encode(lowerTag)
+                    ); // hash the message
                     let hashArray = Array.from(new Uint8Array(digest)); // convert buffer to byte array
-                    let hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
+                    let hashHex = hashArray
+                        .map((b) => b.toString(16).padStart(2, "0"))
+                        .join(""); // convert bytes to hex string
                     let color = "#" + hashHex.substring(0, 6);
 
                     for (const kw of tagKeywords) {
@@ -96,7 +107,9 @@ function Block(props) {
 
     function handleTagClick(event, tagObj) {
         if (event.detail === 3) {
-            let filteredBlockTags = [...blockTags].filter((bT) => bT !== tagObj);
+            let filteredBlockTags = [...blockTags].filter(
+                (bT) => bT !== tagObj
+            );
             setBlockTags(filteredBlockTags);
             setBlockTags(filteredBlockTags);
             setTimeout(() => {
@@ -119,19 +132,26 @@ function Block(props) {
         await updateBlockName(props.blockRef, completeString);
     }
 
+    if (props.block.n === "~DIVIDEBAR~") return <DivideBar></DivideBar>;
     return (
         <div
-            className={`blockSpace ${deleted ? "blockDeleted" : ""} ${props.block.t === 0 ? "blockFinished" : ""} ${props.top ? "blockTop" : ""} ${
+            className={`blockSpace ${deleted ? "blockDeleted" : ""} ${
+                props.block.t === 0 ? "blockFinished" : ""
+            } ${props.top ? "blockTop" : ""} ${
                 props.playing ? "blockPlayingTag" : ""
-            }`}>
+            }`}
+        >
             <div
-                className='blockWrapper'
-                style={{ transform: `rotate(${props.dragging ? "3deg" : "0deg"})` }}
+                className="blockWrapper"
+                style={{
+                    transform: `rotate(${props.dragging ? "3deg" : "0deg"})`,
+                }}
                 onClick={function (e) {
                     if (e.currentTarget === e.target) {
                         closeMenu();
                     }
-                }}>
+                }}
+            >
                 <div
                     {...handlers}
                     onClick={function (e) {
@@ -139,48 +159,65 @@ function Block(props) {
                             closeMenu();
                         }
                     }}
-                    className={`block ${props.playing ? "blockPlaying" : ""}`}>
-                    <span onClick={toggleMenu} className='roundSpan'>
-                        {blockTime} <FaClock className='centeredIcon' alignmentBaseline='middle'></FaClock>
+                    className={`block ${props.playing ? "blockPlaying" : ""}`}
+                >
+                    <span onClick={toggleMenu} className="roundSpan">
+                        {blockTime}{" "}
+                        <FaClock
+                            className="centeredIcon"
+                            alignmentBaseline="middle"
+                        ></FaClock>
                     </span>
-                    <div className='blockTags'>
+                    <div className="blockTags">
                         {blockTags.map((tagObject) => {
                             return (
                                 <span
                                     onClick={(event) => {
                                         handleTagClick(event, tagObject);
                                     }}
-                                    className='roundSpan'
-                                    style={{ backgroundColor: tagObject.color }}>
+                                    className="roundSpan"
+                                    style={{
+                                        backgroundColor: tagObject.color,
+                                    }}
+                                >
                                     {tagObject.text}
                                 </span>
                             );
                         })}
                     </div>
-                    <div className='blockTextWrapper'>
+                    <div className="blockTextWrapper">
                         <input
                             ref={inputRef}
                             onChange={debounce(function (event) {
                                 event.target.classList.add("pulse");
-                                updateAllBlockName(event.target.value, blockTags);
+                                updateAllBlockName(
+                                    event.target.value,
+                                    blockTags
+                                );
 
                                 setTimeout(() => {
                                     event.target.classList.remove("pulse");
                                 }, 300);
                             }, 800)}
                             onMouseDown={(e) => e.stopPropagation()}
-                            className='blockText'
-                            defaultValue={blockName}></input>
+                            className="blockText"
+                            defaultValue={blockName}
+                        ></input>
                     </div>
-                    <button onClick={openMenu} className='editButton'>
+                    <button onClick={openMenu} className="editButton">
                         <FaPen></FaPen>
                     </button>
                 </div>
-                <div tabIndex={-1} className={`deleteBlock ${menuOpen ? "deleteBlockOpen" : "deleteBlockClosed"}`}>
+                <div
+                    tabIndex={-1}
+                    className={`deleteBlock ${
+                        menuOpen ? "deleteBlockOpen" : "deleteBlockClosed"
+                    }`}
+                >
                     <input
                         tabIndex={-1}
-                        className='timeInput'
-                        type='range'
+                        className="timeInput"
+                        type="range"
                         min={5}
                         max={60}
                         value={blockTime}
@@ -192,7 +229,8 @@ function Block(props) {
                         }}
                         onTouchEnd={function () {
                             updateTime();
-                        }}></input>
+                        }}
+                    ></input>
                     <button
                         tabIndex={-1}
                         onClick={function () {
@@ -202,7 +240,8 @@ function Block(props) {
                             }, 500);
                         }}
                         style={{ marginLeft: "0.5em" }}
-                        className='editButton'>
+                        className="editButton"
+                    >
                         <FaCheck></FaCheck>
                     </button>
                 </div>
