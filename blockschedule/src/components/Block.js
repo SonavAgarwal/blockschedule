@@ -8,6 +8,7 @@ import { debounce } from "debounce";
 import { FaPen, FaCheck, FaClock } from "react-icons/fa";
 import tagKeywords, { linkKeywords } from "./tagKeywords";
 import DivideBar from "./DivideBar";
+import { useLocalStorageValue } from "../misc/useLocalStorageValue";
 
 const encoder = new TextEncoder();
 
@@ -31,6 +32,8 @@ function Block(props) {
         onSwipedLeft: openMenu,
         onSwipedRight: closeMenu,
     });
+
+    const expandBlocks = useLocalStorageValue("expandBlocks");
 
     useEffect(
         function () {
@@ -168,6 +171,10 @@ function Block(props) {
                         if (e.currentTarget === e.target) {
                             closeMenu();
                         }
+                    }}
+                    style={{
+                        backgroundColor: "red !important",
+                        ...(expandBlocks === "true" && { height: (props.block.t / 100) * 10 + 4 + "rem" }),
                     }}
                     className={`block ${props.playing ? "blockPlaying" : ""}`}>
                     <span onClick={toggleMenu} className='roundSpan'>

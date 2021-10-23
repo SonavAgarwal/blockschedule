@@ -8,6 +8,8 @@ import { auth, signOut } from "./cloud/database";
 import SignIn from "./pages/SignIn";
 import Blocks from "./pages/Blocks";
 import UserLoader from "./components/UserLoader";
+import { FaRegCaretSquareDown, FaRegCaretSquareUp } from "react-icons/fa";
+import { useLocalStorageValue } from "./misc/useLocalStorageValue";
 
 function App() {
     return (
@@ -36,6 +38,8 @@ function AuthManager(props) {
     const [user, loading, error] = useAuthState(auth);
     const navigation = useHistory();
 
+    const expandBlocks = useLocalStorageValue("expandBlocks");
+
     useEffect(function () {
         if (!loading) {
             if (user) {
@@ -58,6 +62,26 @@ function AuthManager(props) {
         <div className='navbar'>
             <div style={{ flex: 1, alignItems: "center", paddingLeft: "1rem", display: "flex", height: "100%" }}>
                 <h1 style={{ margin: 0, marginLeft: "0.5rem", whiteSpace: "nowrap", fontSize: "1.25rem" }}>{user.displayName}</h1>
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", padding: "0 0rem", paddingLeft: "1rem" }}>
+                <button
+                    className='button'
+                    style={{ display: "flex", alignItems: "center" }}
+                    onClick={function () {
+                        if (expandBlocks === "true") window.localStorage.setItem("expandBlocks", "false");
+                        else window.localStorage.setItem("expandBlocks", "true");
+
+                        window.dispatchEvent(new Event("storage"));
+
+                        console.log("ey");
+                        console.log(expandBlocks);
+                    }}>
+                    {
+                        <FaRegCaretSquareDown
+                            className='transitionIcon'
+                            style={{ transform: expandBlocks === "true" ? "rotateZ(0deg)" : "rotateZ(-180deg)" }}></FaRegCaretSquareDown>
+                    }
+                </button>
             </div>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", padding: "0 0rem", paddingLeft: "1rem" }}>
                 <button className='button' onClick={signOut}>

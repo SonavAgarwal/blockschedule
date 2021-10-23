@@ -101,8 +101,9 @@ body {
 
     display: flex;
     flex-direction: row;
+    align-items: center;
     /* flex: 1; */
-    height: auto;
+    height: 4.5rem;
 
     background-color: var(--bg1);
     padding-top: 1rem;
@@ -219,6 +220,7 @@ body {
     display: flex;
     align-items: center;
     margin-right: 0.5rem;
+    height: 1.5rem;
     /* pointer-events: none; */
 }
 
@@ -389,4 +391,8 @@ body {
     margin-bottom: calc(var(--margin) / 2);
 
     border-radius: 0.5rem;
+}
+
+.transitionIcon {
+    transition: all 0.3s ease;
 }
