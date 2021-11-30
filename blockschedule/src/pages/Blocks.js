@@ -1,14 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-    createBlock,
-    db,
-    deleteBlock,
-    getUID,
-    signOut,
-    updateBlockIndex,
-    updateBlockTime,
-    useUID,
-} from "../cloud/database";
+import { createBlock, db, deleteBlock, getUID, signOut, updateBlockIndex, updateBlockTime, useUID } from "../cloud/database";
 
 import { useList, useListVals } from "react-firebase-hooks/database";
 import Block from "../components/Block";
@@ -55,16 +46,11 @@ function Blocks(props) {
 
     useEffect(
         function () {
-            console.log("the values have changed:");
-            console.log(values);
             let sortedValues = [];
             try {
-                sortedValues = [...values].sort(
-                    (a, b) => a.val().i - b.val().i
-                );
+                sortedValues = [...values].sort((a, b) => a.val().i - b.val().i);
                 setBlocks(sortedValues);
             } catch (e) {
-                console.log("error");
                 console.log(e);
             }
 
@@ -93,7 +79,7 @@ function Blocks(props) {
     useEffect(
         function () {
             let intervalID = setInterval(() => {
-                console.log("interval run");
+                console.log("tick");
                 handleTick();
             }, playSpeed);
             return () => {
@@ -140,11 +126,7 @@ function Blocks(props) {
             return;
         }
 
-        const items = reorder(
-            blocks,
-            result.source.index,
-            result.destination.index
-        );
+        const items = reorder(blocks, result.source.index, result.destination.index);
 
         items.forEach(function (item, index) {
             if (!item) return;
@@ -189,14 +171,13 @@ function Blocks(props) {
 
     function handleFormSubmit(event) {
         event.preventDefault();
-        if (values.length < 30) {
+        if (values.length < 50) {
             createBlock(blockName, values.length);
         }
         setBlockName("");
 
         window.setTimeout(function () {
-            if (endDiv.current !== undefined)
-                endDiv.current.scrollIntoView({ behavior: "smooth" });
+            if (endDiv.current !== undefined) endDiv.current.scrollIntoView({ behavior: "smooth" });
         }, 100);
         // endDiv.scrollIntoView({ behavior: "smooth" });
     }
@@ -207,58 +188,37 @@ function Blocks(props) {
 
     return (
         <>
-            <div className="playContainer">
+            <div className='playContainer'>
                 <button
                     {...longPress}
-                    className="playButton"
+                    className='playButton'
                     onClick={function () {
                         setPlaySpeed(60000);
                         play();
-                    }}
-                >
+                    }}>
                     {isPlaying ? <FaPause></FaPause> : <FaPlay></FaPlay>}
-                    <h1 className="stackLength">{totalLength}</h1>
+                    <h1 className='stackLength'>{totalLength}</h1>
                 </button>
             </div>
-            <div className="blocks">
+            <div className='blocks'>
                 <div style={{ flex: 1 }}></div>
                 <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="droppable">
+                    <Droppable droppableId='droppable'>
                         {(provided, snapshot) => {
                             return (
                                 <div ref={provided.innerRef}>
                                     {blocks.map(function (b, index) {
                                         return (
-                                            <Draggable
-                                                key={b.key}
-                                                draggableId={b.key}
-                                                index={index}
-                                            >
+                                            <Draggable key={b.key} draggableId={b.key} index={index}>
                                                 {(provided, snapshot) => {
                                                     return (
-                                                        <div
-                                                            ref={
-                                                                provided.innerRef
-                                                            }
-                                                            {...provided.draggableProps}
-                                                            {...provided.dragHandleProps}
-                                                        >
+                                                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                                             <Block
-                                                                dragging={
-                                                                    snapshot.isDragging &&
-                                                                    !snapshot.isDropAnimating
-                                                                }
+                                                                dragging={snapshot.isDragging && !snapshot.isDropAnimating}
                                                                 block={b.val()}
                                                                 blockRef={b.ref}
-                                                                top={
-                                                                    index === 0
-                                                                }
-                                                                playing={
-                                                                    index ===
-                                                                        playingIndex &&
-                                                                    isPlaying
-                                                                }
-                                                            ></Block>
+                                                                top={index === 0}
+                                                                playing={index === playingIndex && isPlaying}></Block>
                                                         </div>
                                                     );
                                                 }}
@@ -274,20 +234,18 @@ function Blocks(props) {
                 <div ref={endDiv} style={{ height: 1, width: 1 }}></div>
             </div>
             <form
-                className="blockInputForm"
+                className='blockInputForm'
                 onSubmit={(e) => {
                     handleFormSubmit(e);
-                }}
-            >
+                }}>
                 <input
-                    className="blockInput"
+                    className='blockInput'
                     placeholder={"Type a task..."}
                     value={blockName}
                     onChange={(e) => {
                         setBlockName(e.target.value);
-                    }}
-                ></input>
-                <button className="createButton" type="submit">
+                    }}></input>
+                <button className='createButton' type='submit'>
                     {" "}
                     <FaCheck></FaCheck>
                 </button>

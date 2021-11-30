@@ -22,23 +22,42 @@
     height: 0;
     background: transparent; /* Optional: just make scrollbar invisible */
 }
+@media (prefers-color-scheme: light) {
+    :root {
+        --margin: 0.5rem;
 
-:root {
-    --margin: 0.5rem;
+        --bg1: white;
+        --bg2: #eeeeee;
+        --bg3: #dfdfdf;
+        --textColor: black;
+        --primary1: #1e1e1e;
+        --primary3: #719c39;
+        --primary2: #5079e9;
+    }
+}
 
-    --bg1: white;
-    --bg2: #eeeeee;
-    --bg3: #dfdfdf;
-    --primary1: #719c39;
-    --primary2: #5079e9;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --margin: 0.5rem;
+
+        --bg1: #000000;
+        --bg2: #222222;
+        --bg3: #303030;
+        --textColor: white;
+        --primary1: rgb(200, 200, 200);
+        --primary3: #719c39;
+        --primary2: #5079e9;
+    }
 }
 
 * {
     font-family: "Roboto Condensed", sans-serif;
+    color: var(--textColor);
 }
 
 body {
     overflow: hidden;
+    background-color: var(--bg1);
 }
 
 html {
@@ -59,6 +78,7 @@ body {
     height: 4rem;
     display: flex;
     flex-direction: row;
+    background-color: var(--bg1);
 }
 
 .blocks {
@@ -123,6 +143,10 @@ body {
     background-color: var(--primary1);
 }
 
+.blockPlaying .blockText {
+    color: var(--bg1);
+}
+
 .blockPlaying .editButton {
     color: var(--bg1) !important;
 }
@@ -136,7 +160,7 @@ body {
 }
 
 .blockTop {
-    padding-top: 5em;
+    padding-top: 5rem;
 }
 
 .deleteBlock {
@@ -234,6 +258,7 @@ body {
     outline: none;
     font-size: 1.5rem;
     flex: 1;
+    background-color: var(--bg1);
 }
 
 .blockInputForm {
@@ -378,7 +403,7 @@ body {
     margin: 0;
     font-size: 1rem;
     text-align: center;
-    color: black;
+    color: var(--textColor);
     padding-left: 0.5rem;
 }
 

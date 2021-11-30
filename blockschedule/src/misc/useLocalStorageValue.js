@@ -7,7 +7,6 @@ export function useLocalStorageValue(key) {
         let listener = window.addEventListener("storage", () => {
             // When local storage changes, dump the list to
             // the console.
-            console.log("found a changeee");
             setValue(window.localStorage.getItem(key));
         });
         return function () {

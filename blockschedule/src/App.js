@@ -72,9 +72,6 @@ function AuthManager(props) {
                         else window.localStorage.setItem("expandBlocks", "true");
 
                         window.dispatchEvent(new Event("storage"));
-
-                        console.log("ey");
-                        console.log(expandBlocks);
                     }}>
                     {
                         <FaRegCaretSquareDown

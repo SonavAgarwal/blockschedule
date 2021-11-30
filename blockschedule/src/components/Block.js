@@ -5,10 +5,15 @@ import { deleteBlock, updateBlockName, updateBlockTime } from "../cloud/database
 
 import { debounce } from "debounce";
 
-import { FaPen, FaCheck, FaClock } from "react-icons/fa";
-import tagKeywords, { linkKeywords } from "./tagKeywords";
+import { FaPen, FaCheck, FaClock, FaNetworkWired, FaColumns } from "react-icons/fa";
+import tagKeywords, { linkColor, linkKeywords } from "./tagKeywords";
 import DivideBar from "./DivideBar";
 import { useLocalStorageValue } from "../misc/useLocalStorageValue";
+import isUrl from "is-url";
+import chroma from "chroma-js";
+
+const dateColorScale = chroma.scale(["ff4343", "ffef75", "95ff75"]);
+const msIn3Days = 259200000;
 
 const encoder = new TextEncoder();
 
@@ -45,9 +50,11 @@ function Block(props) {
     useEffect(
         function () {
             if (props.block.n === "~DIVIDEBAR~") return;
+
             let splitText = props.block.n.split(" ");
             let tagText = [];
             let nameText = [];
+
             splitText.forEach(function (word, index) {
                 if (word.charAt(0) === "!") {
                     tagText.push(word.substring(1));
@@ -61,31 +68,21 @@ function Block(props) {
 
                 for (const tag of tagText) {
                     const lowerTag = tag.toString().toLowerCase();
-                    let digest = await window.crypto.subtle.digest("SHA-1", encoder.encode(lowerTag)); // hash the message
-                    let hashArray = Array.from(new Uint8Array(digest)); // convert buffer to byte array
-                    let hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
-                    let color = "#" + hashHex.substring(0, 6);
 
-                    for (const kw of tagKeywords) {
-                        if (lowerTag.includes(kw.word)) {
-                            color = kw.color;
-                        }
-                    }
-
-                    let isLink = false;
-                    for (const kw of linkKeywords) {
-                        if (tag.includes(kw)) {
-                            isLink = true;
-                        }
-                    }
-
-                    let tagText = tag;
-                    if (isLink && !tagText.includes("http")) tagText = "//" + tag;
-
-                    if (isLink) {
-                        tagObjects.push({ text: tagText, color: color, link: true });
+                    if (isUrl(tag)) {
+                        tagObjects.push({ text: tag, color: linkColor, link: true });
+                    } else if (isValidDate(new Date(tag))) {
+                        let color = colorFromDate(getClosestDateWithYear(new Date(tag)));
+                        tagObjects.push({ text: tag, color: color, link: false });
                     } else {
-                        tagObjects.push({ text: tagText, color: color, link: false });
+                        let color = await colorFromTagText(lowerTag);
+                        for (const kw of tagKeywords) {
+                            if (lowerTag.includes(kw.word)) {
+                                color = kw.color;
+                            }
+                        }
+
+                        tagObjects.push({ text: tag, color: color, link: false });
                     }
                 }
 
@@ -101,6 +98,39 @@ function Block(props) {
         },
         [props.block]
     );
+
+    function getClosestDateWithYear(date) {
+        const today = new Date();
+        let date1 = new Date(date).setFullYear(today.getFullYear() - 1);
+        let date2 = new Date(date).setFullYear(today.getFullYear());
+        let date3 = new Date(date).setFullYear(today.getFullYear() + 1);
+        let dateArray = [date1, date2, date3];
+        dateArray.sort(function (a, b) {
+            let diffA = Math.abs(a - today);
+            let diffB = Math.abs(b - today);
+            return diffA - diffB;
+        });
+        return new Date(dateArray[0]);
+    }
+
+    function colorFromDate(date) {
+        let msToDate = date.getTime() - new Date().getTime();
+        if (msToDate < 0) msToDate = 0;
+        if (msToDate > msIn3Days) msToDate = msIn3Days;
+        return dateColorScale(msToDate / msIn3Days).hex();
+    }
+
+    // https://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript
+    function isValidDate(d) {
+        return d instanceof Date && !isNaN(d);
+    }
+
+    async function colorFromTagText(tagText) {
+        let digest = await window.crypto.subtle.digest("SHA-1", encoder.encode(tagText)); // hash the message
+        let hashArray = Array.from(new Uint8Array(digest)); // convert buffer to byte array
+        let hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
+        return "#" + hashHex.substring(0, 6);
+    }
 
     // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
     function pickTextColorBasedOnBgColorSimple(bgColor) {
@@ -149,7 +179,7 @@ function Block(props) {
         await updateBlockName(props.blockRef, completeString);
     }
 
-    if (props.block.n === "~DIVIDEBAR~") return <DivideBar></DivideBar>;
+    if (props.block.n === "~DIVIDEBAR~") return <DivideBar top={props.top}></DivideBar>;
     return (
         <div
             className={`blockSpace ${deleted ? "blockDeleted" : ""} ${props.block.t === 0 ? "blockFinished" : ""} ${props.top ? "blockTop" : ""} ${
@@ -185,6 +215,7 @@ function Block(props) {
                             if (tagObject.link) {
                                 return (
                                     <span
+                                        key={tagObject.text}
                                         onMouseDown={(e) => e.stopPropagation()}
                                         onClick={(event) => {
                                             handleTagClick(event, tagObject);
@@ -201,6 +232,7 @@ function Block(props) {
                             }
                             return (
                                 <span
+                                    key={tagObject.text}
                                     onClick={(event) => {
                                         handleTagClick(event, tagObject);
                                     }}
