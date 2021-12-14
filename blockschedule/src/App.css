@@ -151,6 +151,11 @@ body {
     color: var(--bg1) !important;
 }
 
+.blockDragging {
+    transform: translate(-0.3rem, -0.3rem);
+    box-shadow: 0.3rem 0.3rem 0 var(--primary1), 0.2rem 0.2rem 0 var(--primary1), 0.1rem 0.1rem 0 var(--primary1);
+}
+
 .blockDeleted {
     max-height: 0 !important;
 }
@@ -319,7 +324,7 @@ body {
 
     /* overflow-x: hidden;
     overflow-y: visible; */
-    transition: text-shadow 0.1s cubic-bezier(0, 0, 0.01, 0.99);
+    transition: all 0.1s cubic-bezier(0, 0, 0.01, 0.99);
 }
 
 .blockTags {
@@ -342,7 +347,10 @@ body {
 }
 
 .pulse {
-    text-shadow: 0px 5px 0px var(--primary1);
+    /* text-shadow: 0px 5px 0px var(--primary1); */
+    /* text-shadow: 2px 2px 0px var(--primary1), -2px -2px 0px var(--primary1), -2px 2px 0px var(--primary1), 2px -2px 0px var(--primary1); */
+    /* transform: scale(0.9); */
+    font-size: 1.35rem;
 }
 
 .button {

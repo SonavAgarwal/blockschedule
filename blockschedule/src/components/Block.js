@@ -32,6 +32,16 @@ function Block(props) {
     const [deleted, setDeleted] = useState(false);
 
     const inputRef = useRef();
+    const [inputCursor, setInputCursor] = useState(null);
+    const [inputScroll, setInputScroll] = useState(null);
+
+    useEffect(() => {
+        const input = inputRef.current;
+        if (input) {
+            input.setSelectionRange(inputCursor, inputCursor);
+            input.scrollLeft = inputScroll;
+        }
+    }, [inputRef, inputCursor, blockName]);
 
     const handlers = useSwipeable({
         onSwipedLeft: openMenu,
@@ -154,6 +164,17 @@ function Block(props) {
         setMenuOpen(!menuOpen);
     }
 
+    // function handleClockClick(event) {
+    //     if (event.detail === 3) {
+    //         let newTime = 30;
+    //         if (props.block.t === 30) newTime = 0;
+
+    //         updateTime(newTime);
+    //     } else {
+    //         toggleMenu();
+    //     }
+    // }
+
     function handleTagClick(event, tagObj) {
         if (event.detail === 3) {
             let filteredBlockTags = [...blockTags].filter((bT) => bT !== tagObj);
@@ -167,10 +188,13 @@ function Block(props) {
         }
     }
 
-    function updateTime() {
-        updateBlockTime(props.blockRef, blockTime);
+    function updateTime(newTime) {
+        if (!newTime) {
+            updateBlockTime(props.blockRef, blockTime);
+        } else {
+            updateBlockTime(props.blockRef, newTime);
+        }
     }
-
     async function updateAllBlockName(newName, newTags) {
         let tagStrings = newTags.map((tag) => {
             return "!" + tag.text;
@@ -186,10 +210,10 @@ function Block(props) {
                 props.playing ? "blockPlayingTag" : ""
             }`}>
             <div
-                className='blockWrapper'
-                style={{
-                    transform: `rotate(${props.dragging ? "3deg" : "0deg"})`,
-                }}
+                className={`blockWrapper ${props.dragging ? "blockDragging" : null}`}
+                // style={{
+                //     transform: `rotate(${props.dragging ? "3deg" : "0deg"})`,
+                // }}
                 onClick={function (e) {
                     if (e.currentTarget === e.target) {
                         closeMenu();
@@ -248,11 +272,17 @@ function Block(props) {
                     </div>
                     <div className='blockTextWrapper'>
                         <input
+                            key={props.blockID}
                             ref={inputRef}
                             onChange={debounce(function (event) {
-                                event.target.classList.add("pulse");
-                                updateAllBlockName(event.target.value, blockTags);
+                                const newName = event.target.value;
+                                if (newName.charAt(newName.length - 1) === "!") return;
 
+                                setInputCursor(event.target.selectionStart);
+                                setInputScroll(event.target.scrollLeft);
+
+                                event.target.classList.add("pulse");
+                                updateAllBlockName(newName, blockTags);
                                 setTimeout(() => {
                                     event.target.classList.remove("pulse");
                                 }, 300);

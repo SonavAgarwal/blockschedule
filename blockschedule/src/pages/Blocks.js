@@ -216,6 +216,7 @@ function Blocks(props) {
                                                             <Block
                                                                 dragging={snapshot.isDragging && !snapshot.isDropAnimating}
                                                                 block={b.val()}
+                                                                blockID={b.key}
                                                                 blockRef={b.ref}
                                                                 top={index === 0}
                                                                 playing={index === playingIndex && isPlaying}></Block>
