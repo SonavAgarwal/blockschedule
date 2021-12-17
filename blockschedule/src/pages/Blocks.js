@@ -20,6 +20,8 @@ const reorder = (list, startIndex, endIndex) => {
     return result;
 };
 
+Notification.requestPermission();
+
 function Blocks(props) {
     const noSleep = useRef(new NoSleep());
 
@@ -87,6 +89,26 @@ function Blocks(props) {
             };
         },
         [isPlaying, blocks, playingIndex, playSpeed]
+    );
+
+    useEffect(
+        function () {
+            console.log("heyyeyey");
+            let nameString = blocks[playingIndex]
+                ?.val()
+                ?.n.split(" ")
+                .filter((s) => {
+                    return s.charAt(0) !== "!";
+                })
+                .join(" ");
+
+            try {
+                if (playingIndex && isPlaying) new Notification("Time to move on!", { body: `Start on ${nameString}`, icon: "icons/maskable.png" });
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        [playingIndex]
     );
 
     function handleTick() {
@@ -203,6 +225,7 @@ function Blocks(props) {
             <div className='blocks'>
                 <div style={{ flex: 1 }}></div>
                 <DragDropContext onDragEnd={onDragEnd}>
+                    <div className='blockTopSpacer'></div>
                     <Droppable droppableId='droppable'>
                         {(provided, snapshot) => {
                             return (

@@ -206,11 +206,11 @@ function Block(props) {
     if (props.block.n === "~DIVIDEBAR~") return <DivideBar top={props.top}></DivideBar>;
     return (
         <div
-            className={`blockSpace ${deleted ? "blockDeleted" : ""} ${props.block.t === 0 ? "blockFinished" : ""} ${props.top ? "blockTop" : ""} ${
+            className={`blockSpace ${deleted ? "blockDeleted" : ""} ${props.block.t === 0 ? "blockFinished" : ""} ${props.top ? "" : ""} ${
                 props.playing ? "blockPlayingTag" : ""
             }`}>
             <div
-                className={`blockWrapper ${props.dragging ? "blockDragging" : null}`}
+                className={`blockWrapper ${props.dragging ? "blockDragging" : null} ${props.playing ? "blockDraggingPlaying" : null}`}
                 // style={{
                 //     transform: `rotate(${props.dragging ? "3deg" : "0deg"})`,
                 // }}

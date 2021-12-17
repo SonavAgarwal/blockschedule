@@ -141,20 +141,84 @@ body {
 
 .blockPlaying {
     background-color: var(--primary1);
+    animation: rainbow 3s infinite;
 }
 
 .blockPlaying .blockText {
     color: var(--bg1);
 }
 
-.blockPlaying .editButton {
-    color: var(--bg1) !important;
+.blockPlaying > .editButton > svg {
+    fill: var(--bg1);
 }
 
 .blockDragging {
     transform: translate(-0.3rem, -0.3rem);
     box-shadow: 0.3rem 0.3rem 0 var(--primary1), 0.2rem 0.2rem 0 var(--primary1), 0.1rem 0.1rem 0 var(--primary1);
 }
+
+.blockDragging.blockDraggingPlaying {
+    animation: rainbow 5s linear 0s infinite;
+    /* filter: blur(20px); */
+    /* box-shadow: none !important; */
+    /* box-shadow: 0.3rem 0.3rem 0 var(--bg3), 0.2rem 0.2rem 0 var(--bg3), 0.1rem 0.1rem 0 var(--bg3) !important; */
+}
+
+@keyframes rainbow {
+    0% {
+        box-shadow: 0.3rem 0.3rem 0rem red, 0.2rem 0.2rem 0rem red, 0.1rem 0.1rem 0rem red;
+    }
+    20% {
+        box-shadow: 0.3rem 0.3rem 0rem yellow, 0.2rem 0.2rem 0rem yellow, 0.1rem 0.1rem 0rem yellow;
+    }
+    40% {
+        box-shadow: 0.3rem 0.3rem 0rem green, 0.2rem 0.2rem 0rem green, 0.1rem 0.1rem 0rem green;
+    }
+    60% {
+        box-shadow: 0.3rem 0.3rem 0rem blue, 0.2rem 0.2rem 0rem blue, 0.1rem 0.1rem 0rem blue;
+    }
+    80% {
+        box-shadow: 0.3rem 0.3rem 0rem fuchsia, 0.2rem 0.2rem 0rem fuchsia, 0.1rem 0.1rem 0rem fuchsia;
+    }
+    100% {
+        box-shadow: 0.3rem 0.3rem 0rem red, 0.2rem 0.2rem 0rem red, 0.1rem 0.1rem 0rem red;
+    }
+}
+/* @keyframes rainbow {
+    0% {
+        box-shadow: -0.3rem 0.3rem 0.3rem red;
+    }
+    10% {
+        box-shadow: -0.3rem 0rem 0.3rem orange;
+    }
+    20% {
+        box-shadow: 0rem -0.3rem 0.3rem yellow;
+    }
+    30% {
+        box-shadow: 0.3rem 0rem 0.3rem green;
+    }
+    40% {
+        box-shadow: -0rem 0.3rem 0.3rem cyan;
+    }
+    50% {
+        box-shadow: 0.3rem 0rem 0.3rem blue;
+    }
+    60% {
+        box-shadow: 0rem -0.3rem 0.3rem fuchsia;
+    }
+    70% {
+        box-shadow: 0rem 0rem 0.3rem yellow;
+    }
+    80% {
+        box-shadow: -0.3rem 0.3rem 0.3rem cyan;
+    }
+    90% {
+        box-shadow: 0.3rem 0rem 0.3rem blue;
+    }
+    100% {
+        box-shadow: -0.3rem 0.3rem 0.3rem red;
+    }
+} */
 
 .blockDeleted {
     max-height: 0 !important;
@@ -166,6 +230,12 @@ body {
 
 .blockTop {
     padding-top: 5rem;
+}
+
+.blockTopSpacer {
+    /* height: 5rem; */
+    padding-top: 5rem;
+    width: 1px;
 }
 
 .deleteBlock {
@@ -351,6 +421,7 @@ body {
     /* text-shadow: 2px 2px 0px var(--primary1), -2px -2px 0px var(--primary1), -2px 2px 0px var(--primary1), 2px -2px 0px var(--primary1); */
     /* transform: scale(0.9); */
     font-size: 1.35rem;
+    /* filter: blur(0.1rem); */
 }
 
 .button {
