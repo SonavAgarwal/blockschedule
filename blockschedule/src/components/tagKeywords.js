@@ -5,6 +5,8 @@ const tagKeywords = [
     { word: "asap", color: "#f74943" },
     { word: "email", color: "#d12a8b" },
     { word: "misc", color: "#ffda75" },
+    { word: ":", color: "#808080" },
+    // { word: ":", color: "rgb(61, 90, 207)" },
 ];
 
 export const linkKeywords = ["http", ".com", ".net", ".io", ".org", ".co", ".edu", ".org"];
